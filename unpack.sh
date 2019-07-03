@@ -17,7 +17,6 @@ dd if=$1 of=image.tmp ibs=1 skip=$GZIP_OFFSET_START 2>/dev/null
 GZIP_ARCHIVE_SIZE=`gzip -dc image.tmp 2>/dev/null | gzip -9 |wc -c`
 rm image.tmp
 printf 'GZip Compressed Data Size   : %d\n' $GZIP_ARCHIVE_SIZE
-#printf 'GZip Uncompressed Data Size : %d\n' $GZIP_DATA_SIZE
 dd if=$1 of=1_kernel_header.bin ibs=1 count=$GZIP_OFFSET_START 2>/dev/null
 dd if=$1 of=2_kernel_gzip.gz    ibs=1  skip=$GZIP_OFFSET_START count=$GZIP_ARCHIVE_SIZE 2>/dev/null
 dd if=$1 of=3_kernel_footer.bin ibs=1  skip=$(($GZIP_OFFSET_START+$GZIP_ARCHIVE_SIZE)) 2>/dev/null
