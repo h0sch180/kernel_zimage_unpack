@@ -1,6 +1,6 @@
 ### What is it?
 
-** unpack.sh ** is a simple script that allows you to work with Linux Kernel zImage (ARM, Little Endian) from MTK (Mediatek). Suppose you pulled a Linux Kernel image from boot.img or recovery.img. In general, it consists of the kernel binary itself, compressed with gzip, dtb, loader, and possibly some overhead information.
+**unpack.sh** is a simple script that allows you to work with Linux Kernel zImage (ARM, Little Endian) from MTK (Mediatek). Suppose you pulled a Linux Kernel image from boot.img or recovery.img. In general, it consists of the kernel binary itself, compressed with gzip, dtb, loader, and possibly some overhead information.
 
 There are several options, for example:
 
@@ -22,7 +22,7 @@ The script correctly processes (at least on test examples) both options.
 
 The launch is as follows:
 
-unpack.sh recovery.img-kernel
+    unpack.sh recovery.img-kernel
 
 As a result of the script, three files will be generated:
 
@@ -34,6 +34,6 @@ With the names, I think everything is clear - the first is the boot executable c
 
 Now you can unzip 2_kernel_gzip.gz and study (or modify) the kernel binary. When modifying, it is important that the size of the resulting gz be equal to the size of the original gzip. You can collect everything back like this:
 
-cat 1_kernel_header.bin 2_kernel_gzip.gz 3_kernel_footer.bin> recovery.img-kernel-new
+    cat 1_kernel_header.bin 2_kernel_gzip.gz 3_kernel_footer.bin> recovery.img-kernel-new
 
-The script was written thanks to the questions that arose when communicating with ** jemmini ** and ** hyperion70 **. In any case, it does not pretend to perfection, just a convenient "utility" in order not to launch that HIEW from under Wine and not to cut the recovery.img-kernel manually.
+The script was written thanks to the questions that arose when communicating with **jemmini** and **hyperion70**. In any case, it does not pretend to perfection, just a convenient "utility" in order not to launch that HIEW from under Wine and not to cut the recovery.img-kernel manually.
