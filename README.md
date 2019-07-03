@@ -1,41 +1,39 @@
-### Что это?
+### What is it?
 
-**unpack.sh** - это простенький скрипт позволяющий работать с Linux Kernel zImage (ARM, Little Endian) от MTK (Mediatek). Предположим что вы вытащили из boot.img или recovery.img образ Linux Kernel'а. В общем случае он состоит из самого бинарника ядра пожатого gzip'ом, dtb, loader'а и возможно некоторой служебной информации.
+** unpack.sh ** is a simple script that allows you to work with Linux Kernel zImage (ARM, Little Endian) from MTK (Mediatek). Suppose you pulled a Linux Kernel image from boot.img or recovery.img. In general, it consists of the kernel binary itself, compressed with gzip, dtb, loader, and possibly some overhead information.
 
-Возможны несколько вариантов, например:
+There are several options, for example:
 
-* По команде file recovery.img-kernel  содержимое определяется как Linux kernel ARM boot executable zImage (little-endian).
-* Содержимое определяется как gzip compressed data, max compression, from Unix.
+* At the command file recovery.img-kernel content is defined as the Linux kernel ARM boot executable zImage (little-endian).
+* Content is defined as gzip compressed data, max compression, from Unix.
 
-В первом случае структура файла следующая, вначале идет код boot executable, затем GZip самого ядра, затем таблица смещений и затем DTB, начинающийся с сигнатуры DTB_MAGIC - D0 0D FE ED (0xEDFE0DD0). Что представляет из себя таблица смещений?
+In the first case, the file structure is as follows, first comes the boot executable code, then GZip of the kernel itself, then the offset table and then DTB, starting with the DTB_MAGIC signature - D0 0D FE ED (0xEDFE0DD0). What is the offset table?
 
 * DWORD (0x0)
 * DWORD (0x0)
 * DWORD (0x0)
-* Указатель на DTB_MAGIC
-* Указатель на таблицу смещений (т.е. на первый DWORD из данного списка)
-* ... (и т.п.)
+* Pointer to DTB_MAGIC
+* Pointer to offset table (i.e., to the first DWORD from this list)
+* ... (etc.)
 
-Во втором случае структура проще, никаких boot executable нет, сразу идет GZip kernel'а, а затем DTB, начинающаяся с dtb-magic. 
+In the second case, the structure is simpler, there are no boot executables, the GZip kernel comes immediately, and then DTB, starting with dtb-magic.
 
-Скрипт корректно обрабатывает (по-крайней мере на тестовых примерах) оба варианта.
+The script correctly processes (at least on test examples) both options.
 
-Запуск осуществляется следующим образом:
+The launch is as follows:
 
-	unpack.sh recovery.img-kernel 
-	
-В результате работы скрипта будут сгенерированы три файла:
+unpack.sh recovery.img-kernel
+
+As a result of the script, three files will be generated:
 
 * 1_kernel_header.bin
 * 2_kernel_gzip.gz
 * 3_kernel_footer.bin
 
-С названиями, думаю все понятно - в первом идет код boot executable (если он есть), во втором непосредственно чистый kernel.gz, и в третьем таблица смещений (при ее наличии) + DTB. Суммарный размер этих трех файлов должен быть равен размеру исходного recovery.img-kernel. Если это условие выполняется - значит ядро распаковано правильно.
+With the names, I think everything is clear - the first is the boot executable code (if it exists), the second is directly clean kernel.gz, and the third is the offset table (if available) + DTB. The total size of these three files should be equal to the size of the original recovery.img-kernel. If this condition is met, then the kernel is unpacked correctly.
 
-Теперь можно разархивировать 2_kernel_gzip.gz и изучать (или модифицировать) бинарник ядра. При модификации важно, чтобы размер получившегося gz был равен размеру исходного gzip. Собрать все обратно можно так:
+Now you can unzip 2_kernel_gzip.gz and study (or modify) the kernel binary. When modifying, it is important that the size of the resulting gz be equal to the size of the original gzip. You can collect everything back like this:
 
-	cat 1_kernel_header.bin 2_kernel_gzip.gz 3_kernel_footer.bin > recovery.img-kernel-new
-	
-Скрипт был написан благодаря вопросам, возникшим при общении с  **jemmini** и  **hyperion70**. На совершенство ни в коем случае не претендует, просто удобная "полезняшка" чтобы не запускать тот HIEW из под Wine и не резать recovery.img-kernel вручную.
-		
-		
+cat 1_kernel_header.bin 2_kernel_gzip.gz 3_kernel_footer.bin> recovery.img-kernel-new
+
+The script was written thanks to the questions that arose when communicating with ** jemmini ** and ** hyperion70 **. In any case, it does not pretend to perfection, just a convenient "utility" in order not to launch that HIEW from under Wine and not to cut the recovery.img-kernel manually.
